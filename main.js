@@ -11,19 +11,13 @@ const asideCar = document.querySelector("#shoppingCartContainer");
 const cardsContainer = document.querySelector(".cards-container");
 
 const orderContent = document.querySelector(".my-order-content");
-const imgProductDetail = document.querySelector("#imgProductDetail");
+const productDetail = document.getElementById("productDetail");
+
+//Prueba
+
 navbarEmail.addEventListener("click", toggleDesktopMenu);
 menuBurger.addEventListener("click", toggleMobileMenu);
 menuCarritoIcon.addEventListener("click", toggleAsideCar);
-imgProductDetail.addEventListener("click", toggleProductDetail);
-
-function toggleProductDetail() {
-  console.log("click prueba");
-  imgProductDetail.classList.toggle("inactive");
-  desktopMenu.classList.add("inactive");
-  asideCar.classList.add("inactive");
-  mobileMenu.classList.add("inactive");
-}
 
 function toggleDesktopMenu() {
   console.log("click");
@@ -52,10 +46,19 @@ function toggleMobileMenu() {
 //   }
 //   aside.classList.toggle("inactive");
 // }
-
+function totalProductsCart(arr) {
+  counterCart.innerText = arr.reduce(
+    (acc, product) => acc + product.cantidad,
+    0
+  );
+}
 function toggleAsideCar() {
+  console.log(carro);
   productDetail.classList.add("inactive");
+  orderContent.innerHTML = "";
   carro.forEach((product) => {
+    const pCantidad = document.createElement("p");
+    const priceCart = document.createElement("p");
     const shoppingCart = document.createElement("div");
     shoppingCart.classList.add("shopping-cart");
 
@@ -69,22 +72,50 @@ function toggleAsideCar() {
     const pCart = document.createElement("p");
     pCart.innerText = product.name;
 
-    const priceCart = document.createElement("p");
-    priceCart.innerText = "$" + product.price;
+    const divCantidad = document.createElement("div");
+
+    const btnAumentar = document.createElement("button");
+    btnAumentar.innerText = "+";
+    btnAumentar.addEventListener("click", () => aumentarCantidad(product));
+
+    const btnDisminuir = document.createElement("button");
+    btnDisminuir.innerText = "-";
+    btnDisminuir.addEventListener("click", () => disminuirCantidad(product));
+
+    pCantidad.innerText = `${product.cantidad}`;
+
+    divCantidad.append(btnDisminuir, pCantidad, btnAumentar);
+    divCantidad.classList.add("divCantidad");
+
+    priceCart.innerText = "$" + product.price * product.cantidad;
 
     const imgCloseCart = document.createElement("img");
     imgCloseCart.setAttribute("src", "./icons/icon_close.png");
+    //Eliminar producto
+    imgCloseCart.addEventListener("click", () => eliminarProducto());
 
-    shoppingCart.append(figureCart, pCart, priceCart, imgCloseCart);
+    shoppingCart.append(
+      figureCart,
+      pCart,
+      divCantidad,
+      priceCart,
+      imgCloseCart
+    );
     orderContent.appendChild(shoppingCart);
   });
   const orderTotal = document.createElement("div");
   orderTotal.classList.add("order");
   const pTotal = document.createElement("p");
   const spanTotal = document.createElement("span");
+  spanTotal.innerText = "Total";
   pTotal.appendChild(spanTotal);
+
+  const total = carro.reduce(
+    (acc, product) => acc + product.price * product.cantidad,
+    0
+  );
   const priceTotal = document.createElement("p");
-  priceTotal.innerText = "$560";
+  priceTotal.innerText = "$" + total;
   orderTotal.append(pTotal, priceTotal);
 
   const btnCheckout = document.createElement("button");
@@ -92,7 +123,6 @@ function toggleAsideCar() {
   btnCheckout.classList.add("primary-button");
 
   orderContent.append(orderTotal, btnCheckout);
-
   mobileMenu.classList.add("inactive");
   asideCar.classList.toggle("inactive");
   desktopMenu.classList.add("inactive");
@@ -112,6 +142,34 @@ function toggleAsideCar() {
   //   }
 }
 
+function aumentarCantidad(product) {
+  while (product.cantidad < 3) {
+    product.stock--;
+    product.cantidad++;
+    console.log(product.stock);
+    console.log(product.cantidad);
+  }
+}
+
+// function disminuirCantidad(product) {
+//   if (product.stock > 1) {
+//     product.stock++;
+//     product.cantidad--;
+//   }
+//   toggleAsideCar();
+// }
+
+function eliminarProducto() {
+  //shoppingCart.innerHTML = "";
+  const foundId = carro.find((el) => el.id);
+  console.log(foundId);
+  carro = carro.filter((carroId) => {
+    return carroId !== foundId;
+  });
+  totalProductsCart(carro);
+  toggleAsideCar();
+}
+
 const productsList = [];
 productsList.push({
   id: 1,
@@ -120,6 +178,7 @@ productsList.push({
   image:
     "https://images.pexels.com/photos/276517/pexels-photo-276517.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
   cantidad: 1,
+  stock: 3,
 });
 productsList.push({
   id: 2,
@@ -128,6 +187,7 @@ productsList.push({
   image:
     "https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   cantidad: 1,
+  stock: 3,
 });
 productsList.push({
   id: 3,
@@ -136,8 +196,52 @@ productsList.push({
   image:
     "https://images.pexels.com/photos/9072307/pexels-photo-9072307.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   cantidad: 1,
+  stock: 3,
 });
+function toggleProductDetail(product) {
+  productDetail.classList.remove("inactive");
+  productDetail.innerHTML = "";
+  console.log("click prueba");
+  const encontrado = productsList.find(
+    (findProduct) => findProduct.id === product.id
+  );
+  console.log(encontrado);
+  const divDetClose = document.createElement("div");
+  divDetClose.classList.add("product-detail-close");
 
+  const iconDetClose = document.createElement("img");
+  iconDetClose.setAttribute("src", "./icons/icon_close.png");
+
+  divDetClose.appendChild(iconDetClose);
+  divDetClose.addEventListener("click", () => {
+    productDetail.classList.add("inactive");
+  });
+
+  const imgProDetail = document.createElement("img");
+  imgProDetail.setAttribute("id", "imgProductDetail");
+  imgProDetail.setAttribute("src", encontrado.image);
+
+  const divProInfo = document.createElement("div");
+  divProInfo.classList.add("product-info");
+  const pDetail1 = document.createElement("p");
+  pDetail1.innerText = encontrado.price;
+  const pDetail2 = document.createElement("p");
+  pDetail2.innerText = encontrado.name;
+  const pDetail3 = document.createElement("p");
+  pDetail3.innerText =
+    "With its practical position, this bike also fulfills a decorative function, add your hall or workspace.";
+
+  const btnAddDetCart = document.createElement("button");
+  btnAddDetCart.classList.add("primary-button", "add-to-cart-button");
+  const imgAddDetCart = document.createElement("img");
+  imgAddDetCart.setAttribute("src", "./icons/bt_add_to_cart.svg");
+  btnAddDetCart.appendChild(imgAddDetCart);
+  btnAddDetCart.addEventListener("click", () => agregarAlCarrito(product));
+
+  divProInfo.append(pDetail1, pDetail2, pDetail3, btnAddDetCart);
+
+  productDetail.append(divDetClose, imgProDetail, divProInfo);
+}
 // for (product in productsList) {
 //   console.log(product);
 // }
@@ -149,7 +253,7 @@ function renderProduct(arr) {
 
     const productImg = document.createElement("img");
     productImg.setAttribute("src", product.image);
-
+    productImg.addEventListener("click", () => toggleProductDetail(product));
     const productInfo = document.createElement("div");
     productInfo.classList.add("product-info");
 
@@ -195,8 +299,11 @@ function agregarAlCarrito(product) {
       price: product.price,
       image: product.image,
       cantidad: product.cantidad,
+      stock: product.stock,
     });
   }
+  counterCart.classList.add("classCounterCart");
+  totalProductsCart(carro);
   // repeat
   //   ? carro.map((prod) => {
   //       prod.id === product.id && prod.cantidad++;
@@ -209,6 +316,5 @@ function agregarAlCarrito(product) {
   //       precio: product.precio,
   //       cantidad: product.cantidad,
   //     }) && console.log("NO repetido");
-  console.log(carro);
 }
 renderProduct(productsList);
