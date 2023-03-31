@@ -14,6 +14,8 @@ const orderContent = document.querySelector(".my-order-content");
 const productDetail = document.getElementById("productDetail");
 
 //Prueba
+const btnAumentar = document.createElement("button");
+const btnDisminuir = document.createElement("button");
 
 navbarEmail.addEventListener("click", toggleDesktopMenu);
 menuBurger.addEventListener("click", toggleMobileMenu);
@@ -74,11 +76,9 @@ function toggleAsideCar() {
 
     const divCantidad = document.createElement("div");
 
-    const btnAumentar = document.createElement("button");
     btnAumentar.innerText = "+";
     btnAumentar.addEventListener("click", () => aumentarCantidad(product));
 
-    const btnDisminuir = document.createElement("button");
     btnDisminuir.innerText = "-";
     btnDisminuir.addEventListener("click", () => disminuirCantidad(product));
 
@@ -143,19 +143,26 @@ function toggleAsideCar() {
 }
 
 function aumentarCantidad(product) {
-  while (product.cantidad < 3) {
+  if (product.stock <= 1) {
+    btnAumentar.disabled = true;
+    btnDisminuir.disabled = false;
+  } else {
     product.stock--;
     product.cantidad++;
-    console.log(product.stock);
-    console.log(product.cantidad);
   }
+  totalProductsCart(carro);
+  toggleAsideCar();
 }
 
 // function disminuirCantidad(product) {
-//   if (product.stock > 1) {
+//   if (product.cantidad = 1) {
+//     btnDisminuir.disabled = true;
+//     btnAumentar.disabled = false;
+//   } else {
 //     product.stock++;
 //     product.cantidad--;
 //   }
+//   totalProductsCart(carro);
 //   toggleAsideCar();
 // }
 
