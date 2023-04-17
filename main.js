@@ -192,18 +192,18 @@ const aumentarCantidad = (product) => {
   console.log(priceCart.innerText);
 };
 
-function disminuirCantidad(product) {
-  product.cantidad--;
-  product.stock++;
-  if (product.stock > 0) {
-    btnAumentar.disabled = false;
-  }
-  product.cantidad === 0 ? (btnDisminuir.disabled = true) : false;
-  totalProductsCart(carro);
-  pCantidad.innerText = `${product.cantidad}`;
-  priceCart.innerText = "$" + product.price * product.cantidad;
-  totalPriceXCantidad(carro);
-}
+// function disminuirCantidad(product) {
+//   product.cantidad--;
+//   product.stock++;
+//   if (product.stock > 0) {
+//     btnAumentar.disabled = false;
+//   }
+//   product.cantidad === 0 ? (btnDisminuir.disabled = true) : false;
+//   totalProductsCart(carro);
+//   pCantidad.innerText = `${product.cantidad}`;
+//   priceCart.innerText = "$" + product.price * product.cantidad;
+//   totalPriceXCantidad(carro);
+// }
 
 function eliminarProducto() {
   //shoppingCart.innerHTML = "";
